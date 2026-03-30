@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Done Cogel x PaySolusi - Master Hub & Global Control v5.0</title>
+    
+    <!-- SDK SECTIONS (Firebase & EmailJS) -->
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    <!-- UI Frameworks -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; overflow-x: hidden; }
+        .hero-gradient { background: linear-gradient(135deg, #003087 0%, #0070ba 100%); }
+        .glass-card { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(12px); border-radius: 32px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.4s ease; }
+        
+        .page-section { display: none; }
+        .page-active { display: block; animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .animate-marquee { display: inline-block; animation: marquee 30s linear infinite; }
+        
+        .btn-mode-active { background: white !important; color: #1e40af !important; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .pulse-online { width: 10px; height: 10px; background: #22c55e; border-radius: 50%; display: inline-block; animation: pulse 2s infinite; }
+        .pulse-offline { width: 10px; height: 10px; background: #ef4444; border-radius: 50%; display: inline-block; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
+        
+        #maintenanceOverlay { display: none; }
+        details[open] summary ~ * { animation: slideDown 0.4s ease-out; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="text-slate-900">
+
+    <!-- OVERLAY MAINTENANCE (Dikontrol dari Admin) -->
+    <div id="maintenanceOverlay" class="fixed inset-0 z-[1000] bg-slate-950 flex items-center justify-center text-center p-10">
+        <div class="text-white">
+            <i class="fas fa-server text-7xl text-blue-500 mb-6 animate-pulse"></i>
+            <h1 class="text-4xl font-black uppercase mb-4 italic">Web Maintenance</h1>
+            <p class="text-slate-400 italic">Kami sedang melakukan sinkronisasi server harian. Hubungi WA untuk transaksi.</p>
+        </div>
+    </div>
+
+    <!-- 1. TOP MARQUEE INFO -->
+    <div class="bg-blue-950 text-white py-2.5 overflow-hidden whitespace-nowrap text-[10px] font-black uppercase tracking-[0.2em] z-[60] relative">
+        <div id="marqueeText" class="animate-marquee px-4 italic">
+            🚀 MEMUAT DATA HARGA REAL-TIME... | ADMIN ONLINE FAST RESPOND | ALEHAKIHUNI@GMAIL.COM
+        </div>
+    </div>
+
+    <!-- 2. NAVBAR -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="javascript:void(0)" onclick="showPage('home')" class="flex items-center gap-2 group">
+                <div class="bg-blue-600 p-2.5 rounded-2xl text-white shadow-lg group-hover:rotate-12 transition-transform">
+                    <i class="fab fa-paypal text-xl"></i>
+                </div>
+                <div class="flex flex-col leading-none">
+                    <span class="text-2xl font-black text-slate-900 italic uppercase">Done <span class="text-blue-600">Cogel</span></span>
+                    <span class="text-[8px] font-bold text-slate-400 tracking-widest uppercase">Admin Global Control</span>
+                </div>
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex items-center space-x-5 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <a onclick="showPage('home')" class="cursor-pointer hover:text-blue-600 transition italic">Beranda</a>
+                <a onclick="showPage('bengkel')" class="cursor-pointer hover:text-blue-600 transition text-red-600 italic">Bengkel Akun</a>
+                <a onclick="showPage('jasabayar')" class="cursor-pointer hover:text-blue-600 transition italic">Jasa Bayar</a>
+                <a onclick="showPage('bantuan')" class="cursor-pointer hover:text-blue-600 transition italic">Panduan/FAQ</a>
+                <a onclick="showPage('testimoni')" class="cursor-pointer hover:text-blue-600 transition italic">Testimoni</a>
+                <div class="h-6 w-[1px] bg-slate-200 mx-2"></div>
+                
+                <div id="navGuest" class="flex gap-4">
+                    <button onclick="showPage('login')" class="hover:text-blue-600 transition">Masuk</button>
+                    <button onclick="showPage('register')" class="bg-slate-900 text-white px-5 py-2.5 rounded-full hover:bg-black transition">Daftar</button>
+                </div>
+                <div id="navUser" class="hidden flex gap-4 items-center">
+                    <span id="userNameDisplay" class="text-blue-600 font-black italic underline decoration-blue-200">User</span>
+                    <button onclick="logout()" class="text-red-500 font-black italic">Logout</button>
+                </div>
+
+                <button onclick="orderViaWA()" class="bg-blue-600 text-white px-6 py-2.5 rounded-full shadow-lg hover:bg-blue-700 transition font-black uppercase">Order</button>
+                <button onclick="showPage('login')" class="p-2 text-slate-300 hover:text-blue-600"><i class="fas fa-cog"></i></button>
+            </div>
+            
+            <button onclick="toggleMobileMenu()" class="lg:hidden text-2xl p-2 text-slate-600"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div id="mobileMenu" class="hidden lg:hidden bg-white border-b p-6 space-y-4 shadow-2xl absolute w-full left-0 z-[100]">
+        <a onclick="showPage('home'); toggleMobileMenu()" class="block font-black uppercase text-xs">Beranda</a>
+        <a onclick="showPage('bengkel'); toggleMobileMenu()" class="block font-black uppercase text-xs text-red-600">Bengkel Akun</a>
+        <a onclick="showPage('jasabayar'); toggleMobileMenu()" class="block font-black uppercase text-xs">Jasa Bayar</a>
+        <a onclick="showPage('bantuan'); toggleMobileMenu()" class="block font-black uppercase text-xs">Panduan & FAQ</a>
+        <hr>
+        <button onclick="showPage('login'); toggleMobileMenu()" class="block font-black uppercase text-xs text-blue-600">Masuk Member</button>
+    </div>
+
+    <!-- 3. PAGE: HOME -->
+    <main id="homePage" class="page-section page-active">
+        <section class="hero-gradient text-white py-16 lg:py-32 px-4 relative overflow-hidden">
+            <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+                <div class="space-y-8 text-center lg:text-left">
+                    <h1 class="text-5xl md:text-8xl font-black leading-tight italic tracking-tighter italic">Master <span class="text-blue-300">PayPal</span> Control.</h1>
+                    <p class="text-lg text-blue-100/70 font-medium italic italic italic">"Partner terpercaya jasa PayPal sejak 2018. Convert saldo instan, WD limit 180 hari & jasa bayar global yang terhubung ke sistem Cloud Database."</p>
+                    <div class="flex flex-wrap gap-5 grayscale invert opacity-60 justify-center lg:justify-start">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg" class="h-5">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg" class="h-5">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2e/BRI_Logo.svg" class="h-5">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg" class="h-8">
+                    </div>
+                </div>
+
+                <!-- Kalkulator Utama -->
+                <div class="w-full max-w-md mx-auto">
+                    <div class="glass-card text-slate-900 p-8 shadow-2xl">
+                        <h3 class="text-xl font-black uppercase italic text-blue-800 mb-6 flex justify-between">
+                            <span>Calculator Hub</span>
+                            <span id="statusDotCalc"></span>
+                        </h3>
+                        <div class="space-y-5">
+                            <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1.5 rounded-2xl font-bold text-xs">
+                                <button id="btnJual" onclick="setMode('jual')" class="py-3 rounded-xl btn-mode-active transition-all">JUAL SALDO</button>
+                                <button id="btnBeli" onclick="setMode('beli')" class="py-3 rounded-xl text-slate-500 transition-all">BELI SALDO</button>
+                            </div>
+                            <div class="relative">
+                                <label class="text-[9px] font-black uppercase text-slate-400 absolute left-5 top-3 tracking-widest italic">Nominal (USD)</label>
+                                <input type="number" id="usdInput" oninput="hitung()" value="100" class="w-full p-5 pt-9 bg-slate-100 rounded-3xl font-black text-2xl outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="bg-slate-900 text-white p-6 rounded-[24px] border-b-4 border-blue-600">
+                                <p class="text-[10px] uppercase font-bold opacity-50 mb-1 italic">Estimasi Cair Ke Rekening</p>
+                                <p id="displayIDR" class="text-4xl font-black text-blue-400">Rp 0</p>
+                                <div class="mt-4 pt-4 border-t border-white/10 flex justify-between text-[8px] font-black uppercase opacity-40 italic">
+                                    <span>Rate: Rp <span class="rate-current-label">...</span></span>
+                                    <span>Min Transaksi: $<span id="minTransLabel">10</span></span>
+                                </div>
+                            </div>
+                            <button onclick="orderViaWA()" class="w-full bg-green-500 hover:bg-green-600 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-3 shadow-xl transition-all">
+                                <i class="fab fa-whatsapp text-2xl"></i> HUBUNGI WHATSAPP
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 4. PAGE: BENGKEL -->
+    <main id="bengkelPage" class="page-section py-20 px-4 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-5xl font-black text-center uppercase italic mb-4">Bengkel <span class="text-blue-600 underline italic">Specialist</span></h2>
+            <p class="text-center text-slate-500 font-bold uppercase text-xs tracking-widest mb-16 italic italic italic">Penanganan Dana Tertahan & Limit Akun Permanen</p>
+            <div class="grid md:grid-cols-2 gap-10">
+                <div class="glass-card p-12 border-t-8 border-red-600 shadow-xl">
+                    <h3 class="text-3xl font-black uppercase italic mb-6 leading-tight">WD Saldo <br><span class="text-red-600 underline italic">Limit 180 Hari</span></h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-8 italic">PayPal Anda kena limit permanen? PayPal mewajibkan dana ditahan 180 hari (6 bulan). Kami membantu proses pencairan dana tersebut yang sudah "Eligible for WD" ke bank lokal tanpa perlu kartu kredit asli.</p>
+                    <button onclick="orderViaWA('Halo Admin, saya butuh jasa WD Limit 180 Hari')" class="w-full bg-red-600 text-white py-5 rounded-3xl font-black uppercase text-xs shadow-lg active:scale-95 transition">Konsultasi WD Sekarang</button>
+                </div>
+                <div class="glass-card p-12 border-t-8 border-amber-500 shadow-xl">
+                    <h3 class="text-3xl font-black uppercase italic mb-6 leading-tight">Restore Akun <br><span class="text-amber-600 underline italic">Limit Temporary</span></h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-8 italic">Diminta verifikasi identitas (KTP), upload bukti alamat, atau konfirmasi identitas mendadak? Kami bantu siapkan strategi dan dokumen banding agar akun Anda kembali pulih (Restore).</p>
+                    <button onclick="orderViaWA('Halo Admin, akun saya kena Limit Temporary')" class="w-full bg-amber-500 text-white py-5 rounded-3xl font-black uppercase text-xs shadow-lg active:scale-95 transition">Restore Akun Sekarang</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 5. PAGE: BANTUAN/FAQ (15+ ITEMS) -->
+    <main id="bantuanPage" class="page-section py-20 px-4 bg-slate-50">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-black text-center uppercase italic mb-16 text-slate-900 underline decoration-blue-600 decoration-8 underline-offset-8 italic">15+ Panduan <span class="text-blue-600 italic">Financial Hub</span></h2>
+            <div id="guidesGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20"></div>
+            <div class="max-w-4xl mx-auto bg-white p-10 rounded-[50px] border border-slate-200 shadow-xl italic">
+                <h3 class="text-2xl font-black uppercase italic mb-8 flex items-center gap-3 italic italic"><i class="fas fa-question-circle text-blue-600"></i> FAQ & S&K Transaksi</h3>
+                <div id="faqGrid" class="space-y-4"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 6. PAGE: JASA BAYAR -->
+    <main id="jasabayarPage" class="page-section py-20 px-4 bg-white">
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="text-4xl font-black uppercase italic mb-16">Global <span class="text-blue-600 italic">Jasa Bayar</span></h2>
+            <div class="grid md:grid-cols-3 gap-8 text-left">
+                <div class="glass-card p-10 bg-slate-50 text-center">
+                    <i class="fas fa-shopping-bag text-4xl text-blue-600 mb-6"></i>
+                    <h4 class="font-black uppercase text-sm mb-4 italic italic">eBay & Amazon</h4>
+                    <p class="text-[11px] text-slate-500 font-bold leading-relaxed italic">Beli barang impian di marketplace dunia tanpa punya kartu kredit/VCC sendiri.</p>
+                </div>
+                <div class="glass-card p-10 bg-slate-50 text-center">
+                    <i class="fas fa-file-invoice-dollar text-4xl text-blue-600 mb-6"></i>
+                    <h4 class="font-black uppercase text-sm mb-4 italic italic">Invoice Freelance</h4>
+                    <p class="text-[11px] text-slate-500 font-bold leading-relaxed italic italic">Bayar tagihan dari Upwork, Fiverr, atau vendor luar negeri dengan rate murah.</p>
+                </div>
+                <div class="glass-card p-10 bg-slate-50 text-center">
+                    <i class="fas fa-tv text-4xl text-blue-600 mb-6"></i>
+                    <h4 class="font-black uppercase text-sm mb-4 italic italic">Langganan Apps</h4>
+                    <p class="text-[11px] text-slate-500 font-bold leading-relaxed italic italic">Proses langganan Zoom, Canva Pro, Netflix, Hosting, dan Software premium lainnya.</p>
+                </div>
+            </div>
+            <button onclick="orderViaWA('Halo Admin, saya mau tanya Jasa Bayar Luar Negeri')" class="mt-12 bg-blue-600 text-white font-black py-5 px-12 rounded-full shadow-2xl uppercase text-xs tracking-widest hover:scale-105 transition">Konsultasi Jasa Bayar Sekarang</button>
+        </div>
+    </main>
+
+    <!-- 7. PAGE: TESTIMONI -->
+    <main id="testimoniPage" class="page-section py-20 px-4 bg-slate-50">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-16 border-b-4 border-slate-200 pb-10 gap-6">
+                <div class="text-center md:text-left leading-tight">
+                    <h2 class="text-4xl font-black italic uppercase">Client <span class="text-blue-600 italic italic">Voices</span></h2>
+                    <p class="text-slate-400 font-black text-[10px] tracking-[0.2em] mt-2 uppercase italic italic italic">Updated & Managed by Master Admin Panel</p>
+                </div>
+                <button onclick="renderTestimonials()" class="bg-blue-600 text-white px-8 py-3 rounded-2xl font-black text-xs uppercase italic shadow-lg shadow-blue-100 hover:bg-blue-700 transition flex items-center gap-3 italic"><i class="fas fa-sync-alt"></i> Shuffle Testimoni</button>
+            </div>
+            <div id="testiGrid" class="grid md:grid-cols-3 gap-8"></div>
+        </div>
+    </main>
+
+    <!-- 8. PAGE: AUTH (LOGIN & REGISTER) -->
+    <main id="registerPage" class="page-section py-20 px-4 bg-slate-50 min-h-screen">
+        <div class="max-w-md mx-auto glass-card p-12 shadow-2xl">
+            <h2 class="text-3xl font-black italic uppercase text-center mb-8">Daftar <span class="text-blue-600 italic italic">Member VIP</span></h2>
+            <form onsubmit="handleRegister(event)" class="space-y-4">
+                <input type="text" id="regName" placeholder="Nama Lengkap" required class="w-full p-4 border border-slate-200 rounded-2xl outline-none font-bold text-sm focus:border-blue-600">
+                <input type="text" id="regUser" placeholder="Username" required class="w-full p-4 border border-slate-200 rounded-2xl outline-none font-bold text-sm focus:border-blue-600">
+                <input type="email" id="regEmail" placeholder="Email Aktif" required class="w-full p-4 border border-slate-200 rounded-2xl outline-none font-bold text-sm focus:border-blue-600">
+                <input type="password" id="regPass" placeholder="Password" required class="w-full p-4 border border-slate-200 rounded-2xl outline-none font-bold text-sm focus:border-blue-600">
+                <button type="submit" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl transition uppercase tracking-widest italic">Buat Akun Member</button>
+                <button type="button" onclick="showPage('login')" class="w-full text-slate-400 text-[10px] font-black uppercase mt-4 underline italic italic italic">Sudah punya akun? Login</button>
+            </form>
+        </div>
+    </main>
+
+    <main id="loginPage" class="page-section py-20 px-4 bg-slate-50 min-h-screen">
+        <div class="max-w-md mx-auto glass-card p-12 shadow-2xl border-2 border-white">
+            <h2 class="text-3xl font-black italic uppercase text-center mb-8 italic italic italic">Masuk <span class="text-blue-600 italic italic italic italic">Area</span></h2>
+            <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
+                <div>
+                    <label class="text-[10px] font-black uppercase text-slate-400 ml-1 italic italic">Username Master / Member</label>
+                    <input type="text" id="loginUser" required class="w-full p-4 bg-white border border-slate-200 rounded-2xl outline-none font-bold text-sm focus:border-blue-600">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black uppercase text-slate-400 ml-1 italic italic italic">Password Area</label>
+                    <input type="password" id="loginPass" required class="w-full p-4 bg-white border border-slate-200 rounded-2xl outline-none font-bold text-sm focus:border-blue-600">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl hover:bg-blue-700 transition uppercase tracking-widest italic mt-4 italic italic">Akses Dashboard</button>
+                <button type="button" onclick="showPage('register')" class="w-full text-slate-400 text-[10px] font-black uppercase mt-4 underline italic italic">Daftar Member VIP</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- 9. DASHBOARD MEMBER VIP -->
+    <main id="dashboardPage" class="page-section py-20 px-4 bg-white min-h-screen">
+        <div class="max-w-6xl mx-auto">
+            <div class="bg-slate-900 p-10 rounded-[40px] text-white flex flex-col md:flex-row justify-between items-center mb-12 shadow-2xl">
+                <div class="leading-tight">
+                    <h2 class="text-3xl font-black uppercase italic italic">Halo, <span id="userSessionName" class="text-blue-400 italic italic">Member</span>!</h2>
+                    <p class="text-slate-400 text-[10px] font-black uppercase mt-2 italic tracking-widest italic italic">Akses Fitur Keuangan PayPal Eksklusif</p>
+                </div>
+                <button onclick="logout()" class="mt-6 md:mt-0 bg-red-600 px-10 py-3 rounded-full font-black text-xs uppercase tracking-widest shadow-lg italic italic">Keluar Sesi</button>
+            </div>
+            
+            <div id="vipNoteBox" class="mb-12 p-8 bg-amber-50 border-2 border-amber-200 rounded-[40px] italic shadow-inner">
+                <h4 class="font-black text-amber-800 uppercase text-xs mb-2 italic underline italic italic">Broadcasting Admin:</h4>
+                <p id="vipNoteText" class="text-amber-900 text-sm font-bold italic italic">Selamat datang di Member Hub Done Cogel.</p>
+            </div>
+
+            <div class="grid md:grid-cols-4 gap-6 mb-12 italic italic">
+                <div class="member-card p-8 rounded-[40px] text-center shadow-lg hover:scale-105 transition duration-500">
+                    <i class="fas fa-file-invoice text-4xl text-blue-600 mb-4"></i>
+                    <h4 class="font-black text-xs uppercase mb-1 italic italic">Invoice Maker</h4>
+                    <p class="text-[9px] text-slate-400 font-bold italic italic italic">Buat invoice profesional agar aman.</p>
+                </div>
+                <div class="member-card p-8 rounded-[40px] text-center shadow-lg hover:scale-105 transition duration-500">
+                    <i class="fas fa-shield-alt text-4xl text-amber-500 mb-4"></i>
+                    <h4 class="font-black text-xs uppercase mb-1 italic italic">Anti-Limit Check</h4>
+                    <p class="text-[9px] text-slate-400 font-bold italic italic italic italic">Panduan login dan pembersihan IP.</p>
+                </div>
+                <div class="member-card p-8 rounded-[40px] text-center shadow-lg hover:scale-105 transition duration-500">
+                    <i class="fas fa-credit-card text-4xl text-green-600 mb-4"></i>
+                    <h4 class="font-black text-xs uppercase mb-1 italic italic italic italic">VCC Service</h4>
+                    <p class="text-[9px] text-slate-400 font-bold italic italic italic italic italic">Aktivasi akun PayPal Anda instan.</p>
+                </div>
+                <div class="member-card p-8 rounded-[40px] text-center shadow-lg hover:scale-105 transition duration-500">
+                    <i class="fas fa-history text-4xl text-slate-900 mb-4"></i>
+                    <h4 class="font-black text-xs uppercase mb-1 italic italic italic italic italic italic">My History</h4>
+                    <p class="text-[9px] text-slate-400 font-bold italic italic italic italic italic italic italic">Pantau riwayat transaksi Anda.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 10. MASTER ADMIN HUB (15+ Fitur Kontrol) -->
+    <main id="adminPage" class="page-section py-10 px-4 bg-slate-900 text-white min-h-screen">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-center mb-12 border-b border-white/10 pb-6 italic italic italic">
+                <h2 class="text-3xl font-black uppercase text-blue-400 italic italic italic">Master Master Hub Admin</h2>
+                <button onclick="showPage('home')" class="bg-red-600 px-6 py-2 rounded-full font-black uppercase text-[10px] italic italic italic italic">Exit Panel</button>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- COL 1: FINANCIALS -->
+                <div class="bg-slate-800 p-8 rounded-[40px] space-y-6 border-l-8 border-blue-600">
+                    <h3 class="font-black uppercase text-xs text-blue-400 italic italic italic">1. Keuangan & WhatsApp</h3>
+                    <div>
+                        <label class="text-[9px] font-black uppercase text-slate-400 mb-2 block tracking-widest italic italic">Rate Jual ($1 = Rp)</label>
+                        <input type="number" id="admRateJual" class="w-full p-4 bg-slate-700 border-none rounded-3xl font-black text-3xl text-blue-300 italic italic">
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-black uppercase text-slate-400 mb-2 block tracking-widest italic italic italic">Rate Beli ($1 = Rp)</label>
+                        <input type="number" id="admRateBeli" class="w-full p-4 bg-slate-700 border-none rounded-3xl font-black text-3xl text-green-300 italic italic italic">
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-black uppercase text-slate-400 mb-2 block tracking-widest italic italic italic italic">Min. Transaksi ($)</label>
+                        <input type="number" id="admMin" class="w-full p-4 bg-slate-700 border-none rounded-3xl font-black text-xl text-white italic italic italic italic">
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-black uppercase text-slate-400 mb-2 block tracking-widest italic italic italic italic italic">Nomor WhatsApp (Global)</label>
+                        <input type="text" id="admWA" class="w-full p-4 bg-slate-700 border-none rounded-3xl font-black text-white italic italic italic italic italic italic">
+                    </div>
+                </div>
+
+                <!-- COL 2: SYSTEM & CONTENT -->
+                <div class="bg-slate-800 p-8 rounded-[40px] space-y-6 border-l-8 border-purple-600">
+                    <h3 class="font-black uppercase text-xs text-purple-400 italic italic italic italic">2. Website Hub Control</h3>
+                    <div>
+                        <label class="text-[9px] font-black uppercase text-slate-400 mb-2 block tracking-widest italic italic italic italic italic italic">Running Text Editor</label>
+                        <textarea id="admMarquee" rows="3" class="w-full p-4 bg-slate-700 border-none rounded-2xl font-bold text-xs text-white italic italic italic italic italic italic italic"></textarea>
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-black uppercase text-slate-400 mb-2 block tracking-widest italic italic italic italic italic italic italic">Admin Online Status</label>
+                        <select id="admStatus" class="w-full p-4 bg-slate-700 border-none rounded-3xl font-black text-white outline-none italic italic italic italic italic italic italic italic">
+                            <option value="online">ONLINE (Lampu Hijau)</option>
+                            <option value="offline">OFFLINE (Lampu Merah)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-black uppercase text-slate-400 mb-2 block tracking-widest italic italic italic italic italic italic italic italic">Maintenance Lock</label>
+                        <select id="admMaint" class="w-full p-4 bg-slate-700 border-none rounded-3xl font-black text-white outline-none italic italic italic italic italic italic italic italic italic">
+                            <option value="off">TIDAK (Web Buka)</option>
+                            <option value="on">YA (Web Kunci)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-black uppercase text-slate-400 mb-2 block tracking-widest italic italic italic italic italic italic italic italic italic italic">VIP Dashboard Broadcast</label>
+                        <textarea id="admVIPNote" rows="2" class="w-full p-4 bg-slate-700 border-none rounded-2xl font-bold text-xs text-white italic italic italic italic italic italic italic italic italic italic italic"></textarea>
+                    </div>
+                </div>
+
+                <!-- COL 3: USERS & REVIEWS -->
+                <div class="bg-slate-800 p-8 rounded-[40px] space-y-6 border-l-8 border-amber-600 italic italic italic italic italic">
+                    <h3 class="font-black uppercase text-xs text-amber-400 italic italic italic italic italic italic">3. Database & Feedback</h3>
+                    <div class="max-h-[150px] overflow-y-auto bg-slate-900/50 p-4 rounded-3xl italic italic italic italic italic italic italic">
+                        <label class="text-[8px] uppercase text-slate-500 block mb-2 italic italic italic italic italic italic italic italic">Registered Members List</label>
+                        <div id="admMemberListUI" class="space-y-2 italic italic italic italic italic italic italic italic italic"></div>
+                    </div>
+                    <div class="bg-slate-700/30 p-4 rounded-3xl italic italic italic italic italic italic italic italic italic italic">
+                        <label class="text-[8px] uppercase text-slate-500 block mb-2 italic italic italic italic italic italic italic italic italic italic italic">Add New Testimonial</label>
+                        <input type="text" id="testiName" placeholder="Client Name" class="w-full mb-2 p-2 bg-slate-600 rounded-xl text-xs italic italic italic italic italic italic italic italic italic italic italic italic">
+                        <textarea id="testiMsg" placeholder="Review Text" class="w-full p-2 bg-slate-600 rounded-xl text-xs italic italic italic italic italic italic italic italic italic italic italic italic italic"></textarea>
+                        <button onclick="addTestiAdmin()" class="w-full bg-amber-600 mt-2 py-2 rounded-xl font-black uppercase text-[10px] italic italic italic italic italic italic italic italic italic italic italic italic italic italic">Save Testi</button>
+                    </div>
+                    <button onclick="resetGlobalDB()" class="w-full bg-red-900 border border-red-700 py-3 rounded-2xl font-black uppercase text-[10px] italic italic italic italic italic italic italic italic italic italic italic italic italic italic italic">Hard Reset DB Cloud</button>
+                </div>
+            </div>
+
+            <div class="mt-12 text-center italic italic italic italic italic italic">
+                <button onclick="saveAdminSync()" class="bg-blue-600 text-white font-black py-6 px-24 rounded-[40px] shadow-2xl transition hover:bg-blue-500 uppercase tracking-widest italic italic italic italic italic italic italic animate-pulse italic">Update Website Global & Sync Cloud Hub</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-white py-12 px-4 text-center mt-20 italic italic italic italic italic">
+        <p class="text-2xl font-black uppercase italic mb-4 tracking-tighter italic italic italic italic">Done <span class="text-blue-600 italic italic italic italic italic">Cogel Hub</span></p>
+        <p class="text-[10px] font-black opacity-30 uppercase tracking-[0.4em] italic italic italic italic italic italic">© 2024 DONE COGEL X PAYSOLUSI - MASTER FINANCIAL PAYPAL ECOSYSTEM</p>
+    </footer>
+
+    <!-- LOGIC SCRIPTS -->
+    <script>
+        // --- 1. FIREBASE MASTER CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBrSkaeiGN53JB4l1sug1MKXwZ6WUn0zjE",
+            authDomain: "done-cogel.firebaseapp.com",
+            projectId: "done-cogel",
+            storageBucket: "done-cogel.firebasestorage.app",
+            messagingSenderId: "895150394608",
+            appId: "1:895150394608:web:58d2852a169f4e3b9a4635",
+            databaseURL: "https://done-cogel-default-rtdb.firebaseio.com"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // --- 2. GLOBAL STATES ---
+        let masterData = {
+            settings: { 
+                rateJual: 13500, rateBeli: 16800, wa: "6288274325328", 
+                status: "online", maintenance: "off", min: 10,
+                marquee: "🚀 UPDATE RATE: JUAL $1 = Rp 13.500 | BELI $1 = Rp 16.800 | ADMIN ONLINE",
+                vipNote: "Halo VIP Member! Rate khusus Anda sudah aktif."
+            },
+            members: [],
+            testimonials: []
+        };
+        let session = null;
+        let calcMode = 'jual';
+
+        // --- 3. CLOUD SYNC ENGINE (REALTIME) ---
+        db.ref('hub_master_v5').on('value', (snap) => {
+            const data = snap.val();
+            if(data) {
+                if(data.settings) masterData.settings = data.settings;
+                masterData.members = data.members ? Object.values(data.members) : [];
+                masterData.testimonials = data.testimonials ? Object.values(data.testimonials) : [];
+                syncUI();
+            }
+        });
+
+        function syncUI() {
+            const s = masterData.settings;
+            // Running Text
+            document.getElementById('marqueeText').innerHTML = s.marquee;
+            // Rates & Info
+            document.querySelectorAll('.rate-jual-text').forEach(t => t.innerText = s.rateJual.toLocaleString('id-ID'));
+            document.querySelectorAll('.rate-beli-text').forEach(t => t.innerText = s.rateBeli.toLocaleString('id-ID'));
+            document.querySelectorAll('.wa-number-text').forEach(t => t.innerText = s.wa);
+            document.querySelectorAll('.rate-current-label').forEach(t => t.innerText = (calcMode === 'jual' ? s.rateJual : s.rateBeli).toLocaleString('id-ID'));
+            document.getElementById('minTransLabel').innerText = s.min;
+            document.getElementById('vipNoteText').innerText = s.vipNote;
+
+            // Status Lampu
+            const dotClass = s.status === 'online' ? 'pulse-online' : 'pulse-offline';
+            const dotCalc = document.getElementById('statusDotCalc');
+            if(dotCalc) dotCalc.className = dotClass;
+
+            // Maintenance
+            document.getElementById('maintenanceOverlay').style.display = s.maintenance === 'on' ? 'flex' : 'none';
+
+            // Admin Panel Inputs
+            document.getElementById('admRateJual').value = s.rateJual;
+            document.getElementById('admRateBeli').value = s.rateBeli;
+            document.getElementById('admMin').value = s.min;
+            document.getElementById('admWA').value = s.wa;
+            document.getElementById('admMarquee').value = s.marquee;
+            document.getElementById('admStatus').value = s.status;
+            document.getElementById('admMaint').value = s.maintenance;
+            document.getElementById('admVIPNote').value = s.vipNote;
+
+            // Admin Member List
+            const mList = document.getElementById('admMemberListUI');
+            mList.innerHTML = masterData.members.length ? "" : "No members yet.";
+            masterData.members.forEach(m => {
+                mList.innerHTML += `<div class="bg-slate-700 p-2 rounded-xl text-[8px] italic">👤 ${m.name} (@${m.user})</div>`;
+            });
+
+            renderTestimonials();
+            hitung();
+        }
+
+        // --- 4. NAVIGATION ---
+        function showPage(id) {
+            document.querySelectorAll('.page-section').forEach(p => p.classList.remove('page-active'));
+            const target = document.getElementById(id + 'Page');
+            if(target) target.classList.add('page-active');
+            window.scrollTo(0,0);
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        }
+
+        // --- 5. AUTH SYSTEM (REAL CLOUD STORAGE) ---
+        function handleRegister(e) {
+            e.preventDefault();
+            const n = document.getElementById('regName').value;
+            const u = document.getElementById('regUser').value;
+            const em = document.getElementById('regEmail').value;
+            const p = document.getElementById('regPass').value;
+
+            if(masterData.members.find(m => m.user === u)) return alert("Username sudah digunakan!");
+            
+            db.ref('hub_master_v5/members').push({ name: n, user: u, email: em, pass: p }).then(() => {
+                alert("Daftar Berhasil! Silakan Login.");
+                showPage('login');
+            });
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const uIn = document.getElementById('loginUser').value;
+            const pIn = document.getElementById('loginPass').value;
+
+            // ADMIN LOGIN (Instruksi Anda)
+            if(uIn === "donecogelchanger" && pIn === "Paypalfastdone21") {
+                alert("Master Admin Verified!");
+                return showPage('admin');
+            }
+
+            // USER LOGIN
+            const found = masterData.members.find(m => m.user === uIn && m.pass === pIn);
+            if(found) {
+                session = found;
+                alert("Selamat datang, " + found.name);
+                document.getElementById('navGuest').classList.add('hidden');
+                document.getElementById('navUser').classList.remove('hidden');
+                document.getElementById('userNameDisplay').innerText = found.name;
+                document.getElementById('userSessionName').innerText = found.name;
+                showPage('dashboard');
+            } else {
+                alert("User/Pass Salah!");
+            }
+        }
+
+        function logout() {
+            session = null;
+            document.getElementById('navGuest').classList.remove('hidden');
+            document.getElementById('navUser').classList.add('hidden');
+            alert("Logout Sukses.");
+            showPage('home');
+        }
+
+        // --- 6. CORE CALCULATOR ---
+        function setMode(m) {
+            calcMode = m;
+            document.getElementById('btnJual').classList.toggle('btn-mode-active', m === 'jual');
+            document.getElementById('btnBeli').classList.toggle('btn-mode-active', m === 'beli');
+            syncUI();
+        }
+
+        function hitung() {
+            const val = document.getElementById('usdInput').value;
+            const rate = calcMode === 'jual' ? masterData.settings.rateJual : masterData.settings.rateBeli;
+            document.getElementById('displayIDR').innerText = "Rp " + (val * rate).toLocaleString('id-ID');
+        }
+
+        // --- 7. ADMIN FUNCTIONS ---
+        function saveAdminSync() {
+            const s = {
+                rateJual: parseInt(document.getElementById('admRateJual').value),
+                rateBeli: parseInt(document.getElementById('admRateBeli').value),
+                min: parseInt(document.getElementById('admMin').value),
+                wa: document.getElementById('admWA').value,
+                marquee: document.getElementById('admMarquee').value,
+                status: document.getElementById('admStatus').value,
+                maintenance: document.getElementById('admMaint').value,
+                vipNote: document.getElementById('admVIPNote').value
+            };
+            db.ref('hub_master_v5/settings').set(s).then(() => {
+                alert("SYNC GLOBAL SUKSES!");
+                showPage('home');
+            });
+        }
+
+        function addTestiAdmin() {
+            const n = document.getElementById('testiName').value;
+            const m = document.getElementById('testiMsg').value;
+            if(!n || !m) return alert("Isi nama & pesan!");
+            db.ref('hub_master_v5/testimonials').push({ name: n, msg: m }).then(() => {
+                document.getElementById('testiName').value = "";
+                document.getElementById('testiMsg').value = "";
+                alert("Testimoni ditambahkan ke Cloud!");
+            });
+        }
+
+        function renderTestimonials() {
+            const grid = document.getElementById('testiGrid');
+            if(!grid) return;
+            grid.innerHTML = "";
+            const list = masterData.testimonials.length ? masterData.testimonials : [
+                { name: "Maya Digital", msg: "Cairin $500 cuma 10 menit. Admin Master beneran!" },
+                { name: "Andi Global", msg: "Limit 180 hari cair sukses. Makasih bantuannya bang!" }
+            ];
+            list.sort(() => 0.5 - Math.random()).slice(0, 6).forEach(t => {
+                grid.innerHTML += `<div class="glass-card p-10 bg-white border border-slate-100 italic"><p class="text-slate-600 text-xs mb-8 leading-relaxed font-bold">"${t.msg}"</p><div class="flex items-center gap-4 border-t pt-6"><div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 text-xl"><i class="fas fa-quote-right"></i></div><div><h4 class="font-black text-slate-900 uppercase italic text-[11px] mb-1">${t.name}</h4><span class="text-[8px] font-black uppercase tracking-widest text-blue-600 italic">Verified Trade</span></div></div></div>`;
+            });
+        }
+
+        function orderViaWA() {
+            const val = document.getElementById('usdInput').value;
+            const text = `Halo Master Done Cogel, saya ingin ${calcMode.toUpperCase()} SALDO sebesar $${val}. Mohon panduannya.`;
+            window.open(`https://wa.me/${masterData.settings.wa}?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        // --- 8. HELP & FAQ CONTENT (15+ ITEMS) ---
+        const helpData = [
+            { t: "Ganti Nama Legal", d: "Masuk Settings -> Account -> Edit Name. Upload ID Card sesuai KTP.", i: "fa-id-card" },
+            { t: "Tips Lolos Verifikasi", d: "Foto KTP di cahaya alami (Matahari) tanpa pantulan lampu.", i: "fa-camera" },
+            { t: "Update Alamat", d: "Sinkronkan IP login dengan alamat Billing akun agar tidak kena limit.", i: "fa-map-marker" },
+            { t: "Melepas Hold Dana", d: "Minta pengirim klik 'Confirm Receipt' agar dana cair dlm 48 jam.", i: "fa-history" },
+            { t: "Strategi Anti Limit", d: "Jangan ganti perangkat login terlalu sering dalam 24 jam.", i: "fa-shield-alt" },
+            { t: "VCC Eksklusif", d: "Gunakan VCC kami untuk verifikasi instan status akun Anda.", i: "fa-credit-card" },
+            { t: "Batas Transaksi", d: "Untuk akun baru, jangan terima dana >$200 di transaksi pertama.", i: "fa-tachometer-alt" },
+            { t: "Keamanan 2FA", d: "Aktifkan autentikasi 2 faktor demi keamanan saldo digital Anda.", i: "fa-user-lock" },
+            { t: "Withdraw Bank Lokal", d: "Daftar bank Indonesia yang paling lancar menerima transfer PayPal.", i: "fa-university" }
+        ];
+
+        const faqData = [
+            { q: "Apa itu Jasa Top Up?", a: "Layanan isi saldo USD Anda via transfer Rupiah ke kami." },
+            { q: "Apa itu Jasa Convert?", a: "Tukar saldo PayPal USD Anda ke Bank/DANA/GOPAY instan." },
+            { q: "Berapa Kurs Transaksi?", a: "Kurs fluktuatif, cek di kalkulator atau running text." },
+            { q: "Berapa Lama Prosesnya?", a: "Standar 5-15 menit setelah divalidasi admin." },
+            { q: "Apakah Amanah?", a: "Terpercaya sejak 2018 dengan ribuan transaksi sukses." },
+            { q: "Minimal Transaksi?", a: "Minimal transaksi Top Up / Convert adalah $10 USD." }
+        ];
+
+        function loadHelp() {
+            const hGrid = document.getElementById('guidesGrid');
+            const fGrid = document.getElementById('faqGrid');
+            helpData.forEach(h => {
+                hGrid.innerHTML += `<div class="glass-card p-8 bg-white border border-slate-100 italic"><i class="fas ${h.i} text-blue-600 text-3xl mb-4"></i><h4 class="font-black uppercase text-xs mb-2 italic">${h.t}</h4><p class="text-[10px] text-slate-500 font-bold leading-relaxed italic">${h.d}</p></div>`;
+            });
+            faqData.forEach(f => {
+                fGrid.innerHTML += `<details class="bg-white p-6 rounded-2xl border shadow-sm group italic"><summary class="font-black uppercase text-[11px] cursor-pointer flex justify-between group-hover:text-blue-600 italic italic">${f.q} <i class="fas fa-plus"></i></summary><p class="mt-4 text-xs text-slate-500 font-bold border-t pt-4 italic italic">${f.a}</p></details>`;
+            });
+        }
+
+        function resetGlobalDB() {
+            if(confirm("PERINGATAN: HAPUS DATABASE CLOUD?")) {
+                db.ref('hub_master_v5').remove();
+                location.reload();
+            }
+        }
+
+        // INIT LOAD
+        loadHelp();
+        hitung();
+    </script>
+</body>
+</html>
