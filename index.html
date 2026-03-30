@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Done Cogel x PaySolusi - All-in-One PayPal Specialist</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; overflow-x: hidden; }
+        .hero-gradient { background: linear-gradient(135deg, #003087 0%, #0070ba 100%); }
+        .glass-card { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(12px); border-radius: 32px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.4s ease; }
+        .glass-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1); }
+        
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .animate-marquee { display: inline-block; animation: marquee 30s linear infinite; }
+        
+        .page-section { display: none; }
+        .page-active { display: block; animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn-mode-active { background: white !important; color: #1e40af !important; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .pulse-online { width: 10px; height: 10px; background: #22c55e; border-radius: 50%; display: inline-block; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
+        
+        details[open] summary ~ * { animation: slideDown 0.4s ease-out; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="text-slate-900">
+
+    <!-- RUNNING TEXT -->
+    <div class="bg-blue-950 text-white py-2.5 overflow-hidden whitespace-nowrap text-[10px] font-black uppercase tracking-[0.2em] z-[60] relative">
+        <div class="animate-marquee px-4">
+            🚀 UPDATE RATE: JUAL $1 = Rp <span class="rate-jual-text">13.500</span> | BELI $1 = Rp <span class="rate-beli-text">16.800</span> | <span class="pulse-online mx-2"></span> ADMIN ONLINE | JASA BAYAR & BENGKEL OPEN | WA: 088274325328
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
+            <a href="javascript:void(0)" onclick="showPage('home')" class="flex items-center gap-2 group">
+                <div class="bg-blue-600 p-2.5 rounded-2xl text-white shadow-lg group-hover:rotate-12 transition-transform">
+                    <i class="fab fa-paypal text-xl"></i>
+                </div>
+                <div class="flex flex-col leading-none">
+                    <span class="text-2xl font-black text-slate-900 italic uppercase">Done <span class="text-blue-600">Cogel</span></span>
+                    <span class="text-[8px] font-bold text-slate-400 tracking-widest uppercase">x PaySolusi</span>
+                </div>
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex items-center space-x-5 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <a onclick="showPage('home')" class="cursor-pointer hover:text-blue-600 transition">Beranda</a>
+                <a onclick="showPage('jasabayar')" class="cursor-pointer hover:text-blue-600 transition text-blue-600">Jasa Bayar</a>
+                <a onclick="showPage('bengkel')" class="cursor-pointer hover:text-blue-600 transition text-red-600 font-bold">Bengkel Akun</a>
+                <a onclick="showPage('bantuan')" class="cursor-pointer hover:text-blue-600 transition">Bantuan/FAQ</a>
+                <a onclick="showPage('testimoni')" class="cursor-pointer hover:text-blue-600 transition">Testimoni</a>
+                <a onclick="showPage('sk')" class="cursor-pointer hover:text-blue-600 transition">S&K</a>
+                <div class="h-6 w-[1px] bg-slate-200"></div>
+                <button onclick="showPage('login')" class="hover:text-blue-600 transition">Masuk</button>
+                <button onclick="orderViaWA()" class="bg-blue-600 text-white px-5 py-2.5 rounded-full shadow-lg hover:bg-blue-700 transition">Order</button>
+                <button onclick="showPage('admin')" class="p-2 text-slate-300 hover:text-slate-900"><i class="fas fa-cog"></i></button>
+            </div>
+
+            <button onclick="toggleMobileMenu()" class="lg:hidden text-2xl p-2"><i class="fas fa-bars"></i></button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden lg:hidden bg-white border-b p-6 space-y-4 shadow-2xl absolute w-full left-0 z-[100]">
+            <a onclick="showPage('home'); toggleMobileMenu()" class="block font-bold uppercase text-xs">Beranda</a>
+            <a onclick="showPage('jasabayar'); toggleMobileMenu()" class="block font-bold uppercase text-xs text-blue-600">Jasa Bayar</a>
+            <a onclick="showPage('bengkel'); toggleMobileMenu()" class="block font-bold uppercase text-xs text-red-600">Bengkel Akun</a>
+            <a onclick="showPage('bantuan'); toggleMobileMenu()" class="block font-bold uppercase text-xs">Bantuan & FAQ</a>
+            <a onclick="showPage('testimoni'); toggleMobileMenu()" class="block font-bold uppercase text-xs">Testimoni</a>
+            <hr>
+            <button onclick="showPage('login'); toggleMobileMenu()" class="block font-bold uppercase text-xs">Login Member</button>
+        </div>
+    </nav>
+
+    <!-- PAGE: HOME -->
+    <main id="homePage" class="page-section page-active">
+        <section class="hero-gradient text-white py-16 lg:py-24 px-4 relative overflow-hidden">
+            <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+                <div class="space-y-8 text-center lg:text-left">
+                    <h1 class="text-5xl md:text-7xl font-black leading-tight uppercase italic tracking-tighter">
+                        Master <span class="text-blue-300">PayPal</span> Specialist.
+                    </h1>
+                    <p class="text-lg text-blue-100/70 font-medium italic">"Layanan Convert Tercepat, WD 180 Hari Amanah & Jasa Bayar Luar Negeri."</p>
+                    
+                    <!-- BANK LOGOS & QRIS -->
+                    <div class="bg-white/10 p-6 rounded-[32px] border border-white/20 mx-auto lg:mx-0 max-w-md">
+                        <p class="text-[9px] font-black uppercase tracking-widest mb-4 opacity-60">Metode Pembayaran & QRIS:</p>
+                        <div class="flex flex-wrap gap-5 items-center justify-center lg:justify-start grayscale invert opacity-80">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Bank_Central_Asia.svg" class="h-5" alt="BCA">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg" class="h-5" alt="Mandiri">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2e/BRI_Logo.svg" class="h-5" alt="BRI">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ee/Logo_BNI.svg" class="h-5" alt="BNI">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/Logo_QRIS.svg" class="h-8" alt="QRIS">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kalkulator -->
+                <div class="w-full max-w-md mx-auto">
+                    <div class="glass-card text-slate-900 p-8 shadow-2xl">
+                        <h3 class="text-xl font-black uppercase italic text-blue-800 mb-6"><i class="fas fa-calculator mr-2"></i> Kalkulator</h3>
+                        <div class="space-y-5">
+                            <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1.5 rounded-2xl font-bold text-xs">
+                                <button id="btnJual" onclick="setMode('jual')" class="py-3 rounded-xl btn-mode-active transition-all">JUAL SALDO</button>
+                                <button id="btnBeli" onclick="setMode('beli')" class="py-3 rounded-xl text-slate-500 transition-all">BELI SALDO</button>
+                            </div>
+                            <div class="relative">
+                                <label class="text-[9px] font-black uppercase text-slate-400 absolute left-5 top-3 tracking-widest">Input USD</label>
+                                <input type="number" id="usdInput" oninput="hitung()" value="100" class="w-full p-5 pt-9 bg-slate-100 rounded-2xl font-black text-2xl outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="bg-slate-900 text-white p-6 rounded-[24px]">
+                                <p class="text-[10px] uppercase font-bold opacity-50 mb-1">Estimasi Diterima</p>
+                                <p id="displayIDR" class="text-3xl font-black text-blue-400">Rp 0</p>
+                            </div>
+                            <button onclick="orderViaWA()" class="w-full bg-green-500 hover:bg-green-600 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-3 shadow-xl transition-all">
+                                <i class="fab fa-whatsapp text-2xl"></i> ORDER SEKARANG
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PAGE: JASA BAYAR -->
+    <main id="jasabayarPage" class="page-section py-20 px-4 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-black uppercase italic mb-4">Layanan <span class="text-blue-600">Jasa Bayar</span></h2>
+                <p class="text-slate-500 font-bold uppercase text-xs tracking-widest italic leading-loose text-slate-500">Bayar Invoice, Belanja Online & Langganan App Luar Negeri</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass-card p-10 bg-slate-50 text-center">
+                    <i class="fas fa-shopping-cart text-4xl text-blue-600 mb-6"></i>
+                    <h4 class="font-black uppercase text-sm mb-4 italic">Belanja Online</h4>
+                    <p class="text-xs text-slate-500 font-bold leading-relaxed">eBay, Amazon, Alibaba, AliExpress, dan ribuan marketplace dunia lainnya.</p>
+                </div>
+                <div class="glass-card p-10 bg-slate-50 text-center text-slate-500">
+                    <i class="fas fa-file-invoice-dollar text-4xl text-blue-600 mb-6"></i>
+                    <h4 class="font-black uppercase text-sm mb-4 italic text-slate-900">Bayar Invoice</h4>
+                    <p class="text-xs text-slate-500 font-bold leading-relaxed">Punya tagihan dari freelancer luar negeri? Kami bantu lunasi invoice Anda instan.</p>
+                </div>
+                <div class="glass-card p-10 bg-slate-50 text-center text-slate-500">
+                    <i class="fas fa-tv text-4xl text-blue-600 mb-6"></i>
+                    <h4 class="font-black uppercase text-sm mb-4 italic text-slate-900">Langganan App</h4>
+                    <p class="text-xs text-slate-500 font-bold leading-relaxed">Zoom, Canva, Netflix, Hosting/Domain, dan Tools Digital premium lainnya.</p>
+                </div>
+            </div>
+            <button onclick="orderViaWA('Halo Admin, saya mau tanya Jasa Bayar Luar Negeri')" class="mt-12 w-full max-w-sm mx-auto block bg-blue-600 text-white font-black py-4 rounded-full shadow-lg text-xs uppercase tracking-widest">Konsultasi Jasa Bayar</button>
+        </div>
+    </main>
+
+    <!-- PAGE: BENGKEL AKUN -->
+    <main id="bengkelPage" class="page-section py-20 px-4 bg-slate-50">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-black text-center uppercase italic mb-16">Bengkel Spesialis <span class="text-blue-600">PayPal</span></h2>
+            <div class="grid md:grid-cols-2 gap-10">
+                <div class="glass-card p-10 border-t-8 border-red-600">
+                    <h3 class="text-2xl font-black uppercase italic mb-4">Limit Permanen (180 Hari)</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-6 font-bold italic italic text-slate-500">
+                        "Dana tertahan selama 6 bulan? Akun sudah lewat masa limit tapi tetap tidak bisa WD?"
+                    </p>
+                    <p class="text-[11px] text-slate-500 leading-relaxed mb-8">Kami membantu proses penarikan saldo di akun yang terkena limit permanen yang sudah melewati masa 180 hari ke Bank Lokal. Tanpa perlu bank USA, aman dan terpercaya.</p>
+                    <button onclick="orderViaWA('Halo Admin, saya butuh jasa WD Limit 180 Hari')" class="w-full bg-red-600 text-white py-4 rounded-2xl font-black uppercase text-xs shadow-lg">Konsultasi WD 180 Hari</button>
+                </div>
+                <div class="glass-card p-10 border-t-8 border-amber-500">
+                    <h3 class="text-2xl font-black uppercase italic mb-4">Limit Temporary (Sementara)</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-6 font-bold italic italic text-slate-500">
+                        "PayPal meminta upload dokumen identitas atau verifikasi alamat?"
+                    </p>
+                    <p class="text-[11px] text-slate-500 leading-relaxed mb-8">Bantuan pemulihan (Restore) akun yang diminta verifikasi identitas (KTP/Bukti Alamat) agar bisa normal kembali. Kami memandu proses banding agar dokumen Anda diterima.</p>
+                    <button onclick="orderViaWA('Halo Admin, akun saya kena Limit Temporary')" class="w-full bg-amber-500 text-white py-4 rounded-2xl font-black uppercase text-xs shadow-lg shadow-amber-100">Bantu Lepas Limit</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- PAGE: BANTUAN & FAQ (TECHNICAL GUIDES) -->
+    <main id="bantuanPage" class="page-section py-20 px-4 bg-white">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-4xl font-black text-center uppercase italic mb-16 italic text-slate-900">Pusat Bantuan & <span class="text-blue-600">Edukasi</span></h2>
+            
+            <!-- Tutorial Cards -->
+            <div class="grid md:grid-cols-2 gap-8 mb-20">
+                <div class="glass-card p-8 bg-slate-50 border border-slate-200">
+                    <h4 class="font-black uppercase text-blue-600 mb-4 italic tracking-widest"><i class="fas fa-id-badge mr-2"></i> Mengubah Nama Akun</h4>
+                    <p class="text-[11px] text-slate-500 font-bold leading-relaxed italic">Masuk ke Pengaturan -> Nama -> Klik Ubah. Gunakan nama yang PERSIS sama dengan di KTP. Jika ada perbedaan walau satu huruf, PayPal bisa memicu limit saat withdraw ke rekening bank lokal.</p>
+                </div>
+                <div class="glass-card p-8 bg-slate-50 border border-slate-200 text-slate-500">
+                    <h4 class="font-black uppercase text-blue-600 mb-4 italic tracking-widest text-blue-600"><i class="fas fa-file-upload mr-2"></i> Tips Upload Dokumen</h4>
+                    <p class="text-[11px] text-slate-500 font-bold leading-relaxed italic">Pastikan foto KTP/SIM tidak buram, tanpa pantulan cahaya, dan seluruh sudut dokumen terlihat. PayPal menggunakan robot pembaca dokumen; kesalahan sedikit berakibat penolakan otomatis.</p>
+                </div>
+                <div class="glass-card p-8 bg-slate-50 border border-slate-200 text-slate-500">
+                    <h4 class="font-black uppercase text-blue-600 mb-4 italic tracking-widest text-blue-600"><i class="fas fa-map-marker-alt mr-2"></i> Mengubah Alamat</h4>
+                    <p class="text-[11px] text-slate-500 font-bold leading-relaxed italic">Ganti alamat di Settings -> Address. Sangat penting untuk menyesuaikan alamat dengan KTP atau bukti tagihan (Utility Bill). Alamat yang tidak sinkron sering memicu limit identitas.</p>
+                </div>
+                <div class="glass-card p-8 bg-slate-50 border border-slate-200 text-slate-500">
+                    <h4 class="font-black uppercase text-blue-600 mb-4 italic tracking-widest text-blue-600"><i class="fas fa-shield-alt mr-2"></i> Tips Konversi Aman</h4>
+                    <p class="text-[11px] text-slate-500 font-bold leading-relaxed italic">Gunakan koneksi internet pribadi. Kirim saldo PayPal ke kami, lampirkan screenshot detail transaksi, dan dana Rupiah Anda akan cair dalam 5-15 menit ke Bank/E-Wallet.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Sections -->
+            <div class="space-y-4 max-w-4xl mx-auto">
+                <details class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 group">
+                    <summary class="font-black uppercase text-xs cursor-pointer flex justify-between items-center group-hover:text-blue-600">
+                        Apa yang dimaksud dengan Jasa Top Up & Convert? <i class="fas fa-plus text-[10px]"></i>
+                    </summary>
+                    <p class="mt-4 text-xs text-slate-500 font-bold leading-relaxed italic border-t pt-4">Layanan pengisian (Top Up) saldo USD ke akun Anda atau menukarkan (Convert) saldo USD Anda menjadi Rupiah (IDR) ke rekening Bank Lokal.</p>
+                </details>
+                <details class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 group text-slate-500">
+                    <summary class="font-black uppercase text-xs cursor-pointer flex justify-between items-center group-hover:text-blue-600 text-slate-900">
+                        Berapa kurs (rate) yang digunakan? <i class="fas fa-plus text-[10px]"></i>
+                    </summary>
+                    <p class="mt-4 text-xs text-slate-500 font-bold leading-relaxed italic border-t pt-4">Rate fluktuatif mengikuti harga pasar namun tetap kompetitif. Update rate terbaru ada di Running Text bagian atas website ini.</p>
+                </details>
+                <details class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 group text-slate-500">
+                    <summary class="font-black uppercase text-xs cursor-pointer flex justify-between items-center group-hover:text-blue-600 text-slate-900">
+                        Apakah layanan ini aman? <i class="fas fa-plus text-[10px]"></i>
+                    </summary>
+                    <p class="mt-4 text-xs text-slate-500 font-bold leading-relaxed italic border-t pt-4">Sangat Aman! Kami menggunakan sumber dana legal 100% dan telah melayani ribuan nasabah sejak 2018 dengan reputasi bersih.</p>
+                </details>
+            </div>
+        </div>
+    </main>
+
+    <!-- PAGE: TESTIMONI (DYNAMIC RANDOMIZED) -->
+    <main id="testimoniPage" class="page-section py-20 px-4 bg-slate-50">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex justify-between items-end mb-16 border-b-4 border-slate-200 pb-8">
+                <div>
+                    <h2 class="text-4xl font-black italic uppercase italic">Real <span class="text-blue-600">Testimoni</span></h2>
+                    <p class="text-slate-400 font-black text-[10px] tracking-[0.2em] mt-2">UPDATED DAILY: KATA MEREKA TENTANG KAMI</p>
+                </div>
+                <button onclick="loadTesti()" class="bg-white p-4 rounded-2xl hover:bg-slate-100 transition shadow-sm text-slate-600"><i class="fas fa-sync-alt"></i></button>
+            </div>
+            <div id="testiGrid" class="grid md:grid-cols-3 gap-8">
+                <!-- Diload oleh Script secara acak -->
+            </div>
+        </div>
+    </main>
+
+    <!-- PAGE: SYARAT & KETENTUAN -->
+    <main id="skPage" class="page-section py-20 px-4">
+        <div class="max-w-3xl mx-auto bg-white p-12 rounded-[40px] shadow-xl border border-slate-100">
+            <h2 class="text-2xl font-black uppercase italic mb-8 border-b-4 border-blue-600 inline-block pb-1 italic">Syarat & Ketentuan</h2>
+            <div class="text-[11px] font-bold text-slate-500 uppercase tracking-widest space-y-6 leading-relaxed italic">
+                <p>1. Kami TIDAK menerima saldo hasil carding, scaming, atau ilegal lainnya.</p>
+                <p>2. Sumber dana wajib bersih. Jika saldo bermasalah, dana tidak akan cair dan diproses secara hukum.</p>
+                <p>3. Proses transaksi rata-rata 5-15 menit setelah divalidasi admin.</p>
+                <p>4. Kesalahan input nomor rekening/e-wallet bukan tanggung jawab kami.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- PAGE: LOGIN / REGISTER -->
+    <main id="loginPage" class="page-section py-20 px-4">
+        <div class="max-w-md mx-auto glass-card p-12 shadow-2xl">
+            <h2 class="text-3xl font-black italic uppercase text-center mb-8">Masuk <span class="text-blue-600">Member VIP</span></h2>
+            <div class="space-y-4">
+                <input type="text" placeholder="Username" class="w-full p-4 bg-slate-100 rounded-2xl outline-none font-bold text-sm">
+                <input type="password" placeholder="Password" class="w-full p-4 bg-slate-100 rounded-2xl outline-none font-bold text-sm">
+                <button onclick="alert('Login Maintenance. Gunakan WhatsApp untuk Rate VIP.')" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl hover:bg-blue-700 transition">MASUK SEKARANG</button>
+                <button onclick="showPage('register')" class="w-full text-[10px] font-black uppercase text-slate-400 mt-4 tracking-widest italic">Belum Punya Akun? Daftar Member VIP</button>
+            </div>
+        </div>
+    </main>
+
+    <main id="registerPage" class="page-section py-20 px-4">
+        <div class="max-w-md mx-auto glass-card p-12 shadow-2xl">
+            <h2 class="text-3xl font-black italic uppercase text-center mb-8">Daftar <span class="text-blue-600">Member VIP</span></h2>
+            <div class="space-y-4">
+                <input type="text" placeholder="Nama Lengkap" class="w-full p-4 bg-slate-100 rounded-2xl outline-none font-bold text-sm">
+                <input type="email" placeholder="Email Aktif" class="w-full p-4 bg-slate-100 rounded-2xl outline-none font-bold text-sm">
+                <input type="password" placeholder="Buat Password" class="w-full p-4 bg-slate-100 rounded-2xl outline-none font-bold text-sm">
+                <button onclick="alert('Registrasi Berhasil! Hubungi Admin untuk aktivasi.')" class="w-full bg-slate-900 text-white font-black py-5 rounded-2xl shadow-xl transition">DAFTAR SEKARANG</button>
+                <button onclick="showPage('login')" class="w-full text-[10px] font-black uppercase text-slate-400 mt-4 tracking-widest italic">Sudah Punya Akun? Login</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- ADMIN PANEL -->
+    <main id="adminPage" class="page-section py-20 px-4 bg-slate-900 text-white min-h-screen">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="text-3xl font-black uppercase italic text-blue-400 mb-12">Dashboard Owner</h2>
+            <div class="bg-white/5 p-10 rounded-[40px] border border-white/10 space-y-8">
+                <div>
+                    <label class="block text-[10px] font-black uppercase mb-3 text-slate-400">Update Rate Jual ($1 = Rp)</label>
+                    <input type="number" id="inputRateJual" value="13500" class="w-full p-5 bg-white/5 border border-white/20 rounded-2xl outline-none text-blue-400 font-black text-3xl">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase mb-3 text-slate-400">Update Rate Beli ($1 = Rp)</label>
+                    <input type="number" id="inputRateBeli" value="16800" class="w-full p-5 bg-white/5 border border-white/20 rounded-2xl outline-none text-green-400 font-black text-3xl">
+                </div>
+                <button onclick="saveSettings()" class="w-full bg-blue-600 text-white font-black py-5 rounded-3xl shadow-xl hover:bg-blue-500 transition uppercase tracking-widest italic">Update Website</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-white py-16 px-4 text-center">
+        <p class="text-2xl font-black uppercase italic mb-4 tracking-tighter">Done <span class="text-blue-600">Cogel</span></p>
+        <p class="text-[9px] font-black opacity-40 uppercase tracking-[0.4em] italic">© 2024 DONE COGEL X PAYSOLUSI - PROFESSIONAL PAYPAL SERVICE</p>
+    </footer>
+
+    <script>
+        // DATA
+        let settings = { rateJual: 13500, rateBeli: 16800, wa: "6288274325328" };
+        let currentMode = 'jual';
+
+        // SPA NAVIGATION
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('page-active'));
+            const target = document.getElementById(pageId + 'Page');
+            if(target) target.classList.add('page-active');
+            window.scrollTo(0,0);
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('btnJual').classList.toggle('btn-mode-active', mode === 'jual');
+            document.getElementById('btnBeli').classList.toggle('btn-mode-active', mode === 'beli');
+            hitung();
+        }
+
+        function hitung() {
+            const val = document.getElementById('usdInput').value;
+            const rate = (currentMode === 'jual') ? settings.rateJual : settings.rateBeli;
+            document.getElementById('displayIDR').innerText = "Rp " + (val * rate).toLocaleString('id-ID');
+        }
+
+        function saveSettings() {
+            settings.rateJual = parseInt(document.getElementById('inputRateJual').value);
+            settings.rateBeli = parseInt(document.getElementById('inputRateBeli').value);
+            document.querySelectorAll('.rate-jual-text').forEach(t => t.innerText = settings.rateJual.toLocaleString('id-ID'));
+            document.querySelectorAll('.rate-beli-text').forEach(t => t.innerText = settings.rateBeli.toLocaleString('id-ID'));
+            alert("Data Berhasil Disimpan!");
+            showPage('home');
+            hitung();
+        }
+
+        function orderViaWA(customMsg) {
+            const val = document.getElementById('usdInput').value;
+            const text = customMsg || `Halo Done Cogel, saya ingin ${currentMode.toUpperCase()} SALDO sebesar $${val}. Mohon infonya.`;
+            window.open(`https://wa.me/${settings.wa}?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        // DYNAMIC TESTIMONIALS
+        const dataTesti = [
+            { name: "Dewi L.", cat: "Convert", color: "text-green-600", icon: "fa-university", msg: "Sering cairin dana freelance di sini. Transfer rekening gak pakai lama, fee transparan. Mantap!" },
+            { name: "Bagas S.", cat: "Top Up", color: "text-blue-600", icon: "fa-star", msg: "CS responsif, ramah bgt jelasin rate jual beli. Top up USD 200 lancar jaya!" },
+            { name: "Andi R.", cat: "Convert", color: "text-green-600", icon: "fa-history", msg: "Langganan convert dari tahun lalu. Rate stabil, transfer BNI cepat. Terpercaya!" },
+            { name: "Hendra", cat: "Bengkel", color: "text-red-600", icon: "fa-lock-open", msg: "Dana limit 180 hari akhirnya cair lewat bantuan admin ini. Terima kasih jasanya!" },
+            { name: "Rizky P.", cat: "Jasa Bayar", color: "text-amber-600", icon: "fa-shopping-cart", msg: "Bantu bayar belanja di Amazon sukses dlm 5 menit. Penyelamat!" },
+            { name: "Siska M.", cat: "Jasa Bayar", color: "text-amber-600", icon: "fa-file-invoice-dollar", msg: "Bantu bayar invoice hosting luar negeri sukses. Rekomen!" },
+            { name: "Doni G.", cat: "Bengkel", color: "text-amber-500", icon: "fa-user-shield", msg: "Akun limit identitas langsung restore dibantu admin. Tutorialnya sangat membantu." }
+        ];
+
+        function loadTesti() {
+            let container = document.getElementById('testiGrid');
+            container.innerHTML = "";
+            let random = dataTesti.sort(() => 0.5 - Math.random()).slice(0, 3);
+            random.forEach(t => {
+                container.innerHTML += `
+                    <div class="glass-card p-10 bg-white border border-slate-100 relative italic">
+                        <span class="text-5xl text-blue-100 absolute top-4 left-4">❝</span>
+                        <p class="text-slate-600 text-xs mb-8 leading-relaxed relative z-10 font-bold italic">"${t.msg}"</p>
+                        <div class="flex items-center gap-4 relative z-10 border-t border-slate-100 pt-6">
+                            <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center ${t.color} text-xl">
+                                <i class="fas ${t.icon}"></i>
+                            </div>
+                            <div class="text-left leading-tight">
+                                <h4 class="font-black text-slate-900 uppercase italic text-xs mb-1">${t.name}</h4>
+                                <span class="text-[8px] font-black uppercase tracking-widest ${t.color}">${t.cat} Service</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // INIT
+        loadTesti();
+        hitung();
+    </script>
+</body>
+</html>
